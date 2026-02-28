@@ -153,7 +153,50 @@ Include a one-line reminder at the end of every investigation summary:
 
 ---
 
+---
+
+## Chinese Platform Lookup (cn_lookup.py)
+
+For Chinese social media platforms, use the dedicated script instead of social-analyzer.
+
+### Supported platforms
+
+| 平台 | 覆盖情况 | 备注 |
+|------|---------|------|
+| Bilibili 哔哩哔哩 | ✅ 用户名搜索 + 主页信息 | 最可靠 |
+| 知乎 Zhihu | ✅ 用户名/URL token 搜索 | 需精确匹配 |
+| 微博 Weibo | ⚠️ 移动端降级搜索 | 仅存在性检测 |
+| 小红书 / 抖音 / 微信 | ❌ 不支持 | 强制登录，无公开接口 |
+
+### Running cn_lookup
+
+```bash
+python3 skills/osint-social/scripts/cn_lookup.py "{USERNAME}"
+```
+
+### When to use cn_lookup vs social-analyzer
+
+- User mentions Chinese platforms, Bilibili, 知乎, 微博 → use `cn_lookup.py`
+- User mentions username is Chinese or used on Chinese internet → run **both**
+- General global lookup → use social-analyzer only
+
+### Combined workflow (recommended for thorough investigation)
+
+```bash
+# Step 1: Global platforms
+python3 -m social-analyzer --username "{USERNAME}" --metadata --output json --filter "good" --top 100
+
+# Step 2: Chinese platforms
+python3 skills/osint-social/scripts/cn_lookup.py "{USERNAME}"
+```
+
+Then combine and summarize both outputs together in a single natural language response.
+
+---
+
 ## Reference Files
 
 - `references/platforms.md` — Notable platforms covered and their categories
-- `scripts/run_osint.sh` — Shell wrapper for quick invocation
+- `references/platforms.md` — Notable platforms covered and their categories
+- `scripts/run_osint.sh` — Shell wrapper for global platform lookup
+- `scripts/cn_lookup.py` — Chinese platform lookup (Bilibili, Zhihu, Weibo)
